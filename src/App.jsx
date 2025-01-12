@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./index.css";
 import HomePage from "./components/HomePage";
 import Header from "./components/Header";
 import FileDisplay from "./components/FileDisplay";
+import Information from "./components/Information";
+import Transcribe from "./components/Transcribe";
 
 const App = () => {
   const [file, setFile] = useState(null);
   const [audioStream, setAudioStream] = useState(null);
+  const [output, setOutput] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [finished, setFinished] = useState(false);
 
   const isAudioAvailable = file || audioStream;
 
@@ -15,17 +20,14 @@ const App = () => {
     setAudioStream(null);
   }
 
-  useEffect(() => {
-    console.log(audioStream);
-  }, [audioStream]);
+  const worker = useRef(null);
 
   return (
     <div className="flex flex-col max-w-[1000px] mx-auto w-full">
       <section className="min-h-screen flex flex-col">
         <Header />
-        {isAudioAvailable ? <FileDisplay handleAudioReset={handleAudioReset} file={file} audioStream={audioStream} /> : <HomePage setFile={setFile} setAudioStream={setAudioStream} />}
+        {output ? <Information /> : loading ? <Transcribe downloading={loading} /> : isAudioAvailable ? <FileDisplay handleAudioReset={handleAudioReset} file={file} audioStream={audioStream} /> : <HomePage setFile={setFile} setAudioStream={setAudioStream} />}
       </section>
-      <h1 className="text-green-400">hello</h1>
       <footer></footer>
     </div>
   );
